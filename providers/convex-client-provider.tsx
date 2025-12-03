@@ -2,7 +2,7 @@
 
 import { ClerkProvider, useAuth } from "@clerk/nextjs";
 import { ConvexProviderWithClerk } from "convex/react-clerk";
-import { AuthLoading, ConvexReactClient } from "convex/react";
+import { Authenticated, AuthLoading, ConvexReactClient } from "convex/react";
 
 import { Loading } from "@/components/auth/loading"; // <- your custom loader component
 
@@ -19,12 +19,10 @@ export const ConvexClientProvider = ({
   return (
     <ClerkProvider>
       <ConvexProviderWithClerk useAuth={useAuth} client={convex}>
-        {/* ⏳ Show loading logo when Clerk + Convex auth state is loading */}
+        <Authenticated>{children}</Authenticated>
         <AuthLoading>
           <Loading />
         </AuthLoading>
-
-        {children}
       </ConvexProviderWithClerk>
     </ClerkProvider>
   );

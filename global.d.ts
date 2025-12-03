@@ -1,2 +1,2 @@
 // Allows TypeScript to import .css files without errors
-declare module '*.css';
+declare module "*.css";

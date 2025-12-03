@@ -19,10 +19,9 @@ export const ConvexClientProvider = ({
   return (
     <ClerkProvider>
       <ConvexProviderWithClerk useAuth={useAuth} client={convex}>
-
         {/* ⏳ Show loading logo when Clerk + Convex auth state is loading */}
         <AuthLoading>
-          <Loading/>
+          <Loading />
         </AuthLoading>
 
         {children}

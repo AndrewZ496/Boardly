@@ -3,10 +3,10 @@
 import { memo } from "react";
 import { BringToFront, SendToBack, Trash2 } from "lucide-react";
 
-import { Camera, Color } from "@/types/canvas";
+import { Camera, Color, LayerType } from "@/types/canvas";
 import { Button } from "@/components/ui/button";
 import { Hint } from "@/components/hint";
-import { useMutation, useSelf } from "@/liveblocks.config";
+import { useMutation, useSelf, useStorage } from "@/liveblocks.config";
 import { useSelectionBounds } from "@/hooks/use-selection-bounds";
 import { useDeleteLayers } from "@/hooks/use-delete-layers";
 
@@ -22,13 +22,29 @@ export const SelectionTools = memo(({
   setLastUsedColor
 }: SelectionToolsProps) => {
   const selection = useSelf((me) => me.presence.selection);
+  const layers = useStorage((root) => root.layers);
+
+  const setFontSize = useMutation(
+    ({ storage }, size: number) => {
+      const liveLayers = storage.get("layers");
+      selection.forEach((id) => {
+        const layer = liveLayers.get(id);
+        if (!layer) return;
+        const type = layer.get("type");
+        if (type === LayerType.Text || type === LayerType.Note) {
+          layer.update({ fontSize: size });
+        }
+      });
+    },
+    [selection]
+  );
 
   const moveToFront = useMutation(
     ({ storage }) => {
       const liveLayerIds = storage.get("layerIds");
       const indices: number[] = [];
 
-      const arr = liveLayerIds.toArray();
+      const arr = liveLayerIds.toImmutable();
 
       for (let i = 0; i < arr.length; i++) {
         if (selection.includes(arr[i])) {
@@ -52,7 +68,7 @@ export const SelectionTools = memo(({
     const liveLayerIds = storage.get("layerIds");
     const indices: number[] = [];
 
-    const arr = liveLayerIds.toArray();
+    const arr = liveLayerIds.toImmutable();
 
     for (let i = 0; i < arr.length; i++) {
       if (selection.includes(arr[i])) {
@@ -100,6 +116,51 @@ export const SelectionTools = memo(({
       }}
     >
       <ColorPicker onChange={setFill} />
+
+      {selection.length === 1 && (() => {
+        const layer = layers.get(selection[0]);
+        if (!layer) return null;
+        if ((layer as any).type === LayerType.Text || (layer as any).type === LayerType.Note) {
+          return (
+            <Hint label="Font Size">
+              <div className="flex items-center">
+                <input
+                  type="number"
+                  min={12}
+                  max={200}
+                  value={(layer as any).fontSize ?? 24}
+                  onInput={(e: React.FormEvent<HTMLInputElement>) => {
+                    const input = e.currentTarget;
+                    const newSize = Number(input.value);
+                    const validatedSize = newSize >= 12 ? newSize : newSize;
+                    setFontSize(validatedSize);
+                  }}
+                  onFocus={(e) => {
+                    e.currentTarget.select();
+                  }}
+                  className="h-12 text-base text-center rounded border border-neutral-200 px-1"
+                  style={{
+                    width: `${String((layer as any).fontSize ?? 24).length + 3}ch`,
+                    minWidth: '6ch',
+                    transition: 'width 0.1s',
+                  }}
+                />
+              </div>
+            </Hint>
+          );
+        }
+        return null;
+      })()}
+
+      {selection.length === 1 && (() => {
+        const layer = layers.get(selection[0]);
+        if (!layer) return null;
+        const type = (layer as any).type;
+        if (type === LayerType.Text || type === LayerType.Note) {
+          return <div className="border-l border-neutral-200 mx-2" />;
+        }
+        return null;
+      })()}
 
       <div className="flex flex-col gap-y-0.5">
         <Hint label="Bring to front">

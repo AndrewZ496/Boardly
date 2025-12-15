@@ -11,6 +11,7 @@ export const get = query({
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
     console.log("Convex userId:", identity?.subject);
+    console.log("Convex orgId:", args.orgId);
 
     https: if (!identity) {
       throw new Error("Unauthorized");

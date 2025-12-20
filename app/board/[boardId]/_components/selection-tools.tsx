@@ -15,10 +15,11 @@ import { ColorPicker } from "./color-picker";
 interface SelectionToolsProps {
   camera: Camera;
   setLastUsedColor: (color: Color) => void;
+  lastUsedColor: Color;
 }
 
 export const SelectionTools = memo(
-  ({ camera, setLastUsedColor }: SelectionToolsProps) => {
+  ({ camera, setLastUsedColor, lastUsedColor }: SelectionToolsProps) => {
     const selection = useSelf((me) => me.presence.selection);
     const layers = useStorage((root) => root.layers);
 
@@ -149,7 +150,7 @@ export const SelectionTools = memo(
         )`,
         }}
       >
-        <ColorPicker onChange={setFill} />
+        <ColorPicker onChange={setFill} lastUsedColor={lastUsedColor} />
 
         {selection.length === 1 &&
           (() => {

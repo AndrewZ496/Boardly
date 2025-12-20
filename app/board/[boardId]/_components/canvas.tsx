@@ -469,7 +469,7 @@ export const Canvas = ({ boardId }: CanvasProps) => {
         redo={history.redo}
       />
 
-      <SelectionTools camera={camera} setLastUsedColor={setLastUsedColor} />
+      <SelectionTools camera={camera} setLastUsedColor={setLastUsedColor} lastUsedColor={lastUsedColor} />
 
       <svg
         className="h-[100vh] w-[100vw]"

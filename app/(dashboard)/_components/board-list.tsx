@@ -8,24 +8,20 @@ import { EmptyFavorites } from "./empty-favorites";
 import { EmptySearch } from "./empty-search";
 import { BoardCard } from "./board-card";
 import { NewBoardButton } from "./new-board-button";
-import { useSearchParams } from "next/navigation";
 
 interface BoardListProps {
   orgId: string;
+  searchParams: {
+    search?: string;
+    favorites?: string;
+  };
 }
 
-export const BoardList = ({ orgId }: BoardListProps) => {
-  // Read URL params directly
-  const params = useSearchParams();
-  const favorites = params.get("favorites") ?? "";
-  const search = params.get("search") ?? "";
+export const BoardList = ({ orgId, searchParams }: BoardListProps) => {
+  const favorites = searchParams.favorites ?? "";
+  const search = searchParams.search ?? "";
 
-  // Query boards with Convex
-  const data = useQuery(api.boards.get, {
-    orgId,
-    search,
-    favorites,
-  });
+  const data = useQuery(api.boards.get, { orgId, search, favorites });
 
   if (data === undefined) {
     return (

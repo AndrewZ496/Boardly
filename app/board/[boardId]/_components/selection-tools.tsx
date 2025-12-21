@@ -1,7 +1,8 @@
 "use client";
 
 import { memo, useState, useEffect } from "react";
-import { BringToFront, SendToBack, Trash2 } from "lucide-react";
+import { Copy, Trash2 } from "lucide-react";
+import { BringToFrontIcon, SendToBackIcon } from "@/components/layer-icons";
 
 import { Camera, Color, LayerType } from "@/types/canvas";
 import { Button } from "@/components/ui/button";
@@ -15,11 +16,12 @@ import { ColorPicker } from "./color-picker";
 interface SelectionToolsProps {
   camera: Camera;
   setLastUsedColor: (color: Color) => void;
+  onDuplicate: () => void;
   lastUsedColor: Color;
 }
 
 export const SelectionTools = memo(
-  ({ camera, setLastUsedColor, lastUsedColor }: SelectionToolsProps) => {
+  ({ camera, setLastUsedColor, onDuplicate, lastUsedColor }: SelectionToolsProps) => {
     const selection = useSelf((me) => me.presence.selection);
     const layers = useStorage((root) => root.layers);
 
@@ -211,21 +213,27 @@ export const SelectionTools = memo(
         <div className="flex flex-col gap-y-0.5">
           <Hint label="Bring to front">
             <Button onClick={moveToFront} variant="board" size="icon">
-              <BringToFront />
+              <BringToFrontIcon color="black" height={30} width={30} />
             </Button>
           </Hint>
 
           <Hint label="Send to back" side="bottom">
             <Button onClick={moveToBack} variant="board" size="icon">
-              <SendToBack />
+              <SendToBackIcon color="black" height={30} width={30} />
             </Button>
           </Hint>
         </div>
 
         <div
-          className="flex items-center pl-2 ml-2 border-l
+          className="flex flex-col items-center pl-2 ml-2 border-l
       border-neutral-200"
         >
+          <Hint label="Duplicate (Ctrl + D)">
+            <Button onClick={onDuplicate} variant="board" size="icon">
+              <Copy />
+            </Button>
+          </Hint>
+
           <Hint label="Delete">
             <Button variant="board" size="icon" onClick={deleteLayers}>
               <Trash2 />

@@ -63,10 +63,15 @@ export const Actions = ({
           Copy board link
         </DropdownMenuItem>
 
-        <DropdownMenuItem onClick={() => onOpen(id, title)} className="p-3 cursor-pointer">
+        <DropdownMenuItem
+          onClick={() => onOpen(id, title)}
+          className="p-3 cursor-pointer"
+        >
           <Pencil className="h-4 w-4 mr-2" />
           Rename
         </DropdownMenuItem>
+
+        <DropdownMenuSeparator />
 
         <ConfirmModal
           header="Delete board?"
